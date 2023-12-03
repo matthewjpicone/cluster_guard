@@ -2,7 +2,10 @@
 """
 PostgreSQL Replication Monitor
 
-This module provides a graphical user interface for monitoring the replication status and delay between a PostgreSQL master and slave server. It utilizes psycopg2 for database connections and tkinter for the graphical user interface. The application continuously checks and displays the replication status and delay in real-time, offering insights into the health and performance of PostgreSQL server replication.
+This module provides a graphical user interface for monitoring the replication status and delay between a PostgreSQL
+master and slave server. It utilizes psycopg2 for database connections and tkinter for the graphical user interface.
+The application continuously checks and displays the replication status and delay in real-time, offering insights into
+the health and performance of PostgreSQL server replication.
 
 Example
 -------
@@ -10,11 +13,14 @@ To use this module, ensure that psycopg2, tkinter, and matplotlib are installed,
 
     $ python postgresql_replication_monitor.py
 
-The GUI will display the current replication status of the master and slave servers, along with a plot of replication delay over time.
+The GUI will display the current replication status of the master and slave servers, along with a plot of replication
+delay over time.
 
 Notes
 -----
-This module requires a configuration file `credentials.py` containing `MASTER_DB_CONFIG` and `SLAVE_DB_CONFIG` for database connections. The replication delay is graphed using matplotlib and updated in real-time using a tkinter interface.
+This module requires a configuration file `credentials.py` containing `MASTER_DB_CONFIG` and `SLAVE_DB_CONFIG` for
+database connections. The replication delay is graphed using matplotlib and updated in real-time using a tkinter
+interface.
 
 Attributes
 ----------
@@ -28,6 +34,7 @@ replication_delays : collections.deque
 Author : matthewpicone
 Date   : 03/12/2023
 """
+from collections import deque
 
 import psycopg2
 import tkinter as tk
@@ -36,7 +43,6 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import datetime
-from collections import dequecluster_guard
 import credentials
 
 # Configuration
@@ -45,6 +51,7 @@ SLAVE_DB_CONFIG = credentials.credentials.SLAVE_DB_CONFIG
 
 # Data storage for replication delay
 replication_delays = deque(maxlen=300)  # Set the maximum length to 300
+
 
 def update_replication_data(is_in_recovery, replication_delay):
     """
@@ -95,6 +102,7 @@ def check_master_status():
             master_status_indicator.itemconfig(master_status_rectangle, fill="red")
         time.sleep(1)
 
+
 def check_slave_status():
     """
     Continuously check the status and replication delay of the slave database.
@@ -120,6 +128,7 @@ def check_slave_status():
             slave_status_color.set("red")
             slave_status_indicator.itemconfig(slave_status_rectangle, fill="red")
         time.sleep(1)
+
 
 def plot_replication_delay(fig, ax):
     """
@@ -157,6 +166,7 @@ def refresh_plot():
     plot_replication_delay(fig, ax)
     canvas.draw()
 
+
 # Set up the Tkinter window
 root = tk.Tk()
 root.title("PostgreSQL Replication Monitor")
@@ -171,7 +181,7 @@ slave_status = tk.StringVar(root, value="Checking Slave Status...")
 
 # Indicator colors
 master_status_color = tk.StringVar(root, value="gray")  # Default color is gray
-slave_status_color = tk.StringVar(root, value="gray")   # Default color is gray
+slave_status_color = tk.StringVar(root, value="gray")  # Default color is gray
 
 # Create frames for better layout
 master_frame = tk.Frame(root, padx=10, pady=10)
@@ -195,7 +205,8 @@ master_status_indicator.grid(row=0, column=1, padx=(0, 10), pady=(10, 0), sticky
 master_status_rectangle = master_status_indicator.create_rectangle(0, 0, 15, 15, fill=master_status_color.get())
 master_status_indicator.itemconfig(master_status_rectangle, fill=master_status_color.get())  # Set initial color
 
-master_label = tk.Label(master_frame, textvariable=master_status, justify=tk.LEFT, wraplength=480, relief=tk.SUNKEN, bg="white", anchor='w')
+master_label = tk.Label(master_frame, textvariable=master_status, justify=tk.LEFT, wraplength=480, relief=tk.SUNKEN,
+                        bg="white", anchor='w')
 master_label.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
 slave_label_title = tk.Label(slave_frame, text=f"Slave {SLAVE_DB_CONFIG['host']}", font=("Helvetica", 14))
@@ -209,7 +220,8 @@ slave_status_indicator.grid(row=0, column=1, padx=(0, 10), pady=(10, 0), sticky=
 slave_status_rectangle = slave_status_indicator.create_rectangle(0, 0, 15, 15, fill=slave_status_color.get())
 slave_status_indicator.itemconfig(slave_status_rectangle, fill=slave_status_color.get())  # Set initial color
 
-slave_label = tk.Label(slave_frame, textvariable=slave_status, justify=tk.LEFT, wraplength=480, relief=tk.SUNKEN, bg="white", anchor='w')
+slave_label = tk.Label(slave_frame, textvariable=slave_status, justify=tk.LEFT, wraplength=480, relief=tk.SUNKEN,
+                       bg="white", anchor='w')
 slave_label.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
 # Matplotlib plot setup with padding
@@ -219,9 +231,11 @@ canvas = FigureCanvasTkAgg(fig, master=plot_frame)
 canvas_widget = canvas.get_tk_widget()
 canvas_widget.grid(row=0, column=0, sticky="nsew")
 
+
 def update_plot():
     refresh_plot()
     root.after(1000, update_plot)  # Refresh every 60 seconds
+
 
 update_plot()
 
